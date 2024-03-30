@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Friend App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins">
+    <style>
+      /* Neumorphic styles */
+      body {
+        background-color: #e0e5ec;
+        font-family: 'Poppins', sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      .container {
+        background-color: #e0e5ec;
+        border-radius: 20px;
+        box-shadow: -5px -5px 10px rgba(255, 255, 255, 0.5), 5px 5px 10px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        max-width: 800px;
+        width: 100%;
+      }
+
+      nav {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
+
+      nav a {
+        background-color: #e0e5ec;
+        border-radius: 10px;
+        box-shadow: -3px -3px 6px rgba(255, 255, 255, 0.5), 3px 3px 6px rgba(0, 0, 0, 0.1);
+        color: #333;
+        padding: 10px 20px;
+        text-decoration: none;
+        margin: 0 10px;
+        transition: all 0.3s ease;
+      }
+
+      nav a:hover {
+        box-shadow: inset -3px -3px 6px rgba(255, 255, 255, 0.5), inset 3px 3px 6px rgba(0, 0, 0, 0.1);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <nav>
+        <a href="{% url 'post_list' %}">Posts</a>
+        <a href="{% url 'profile' %}">My Profile</a>
+        <a href="{% url 'friends' %}">Friends</a>
+        <a href="{% url 'user_list' %}">Users</a>
+      </nav>
+      {% block content %}{% endblock %}
+    </div>
+    {% block scripts %}{% endblock scripts %}
+  </body>
+</html>

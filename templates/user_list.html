@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>User List</h1>
+
+  <ul>
+    {% for user in users %}
+      <li>
+        <div class="user-card">
+          <div class="user-info">
+            <h3>{{ user.username }}</h3>
+          </div>
+          <div class="user-actions">
+            {% if user.profile.id in sent_friend_requests %}
+              <button class="friend-request-sent">Friend request sent</button>
+            {% else %}
+              <a href="{% url 'send_friend_request' user.id %}" class="send-friend-request">Send Friend Request</a>
+            {% endif %}
+          </div>
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    const sendFriendRequestButtons = document.querySelectorAll('.send-friend-request');
+    sendFriendRequestButtons.forEach(button => {
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+        const url = event.target.href;
+        fetch(url, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+          },
+        })
+          .then(response => {
+            if (response.ok) {
+              event.target.classList.add('friend-request-sent');
+              event.target.textContent = 'Friend request sent';
+              event.target.removeAttribute('href');
+            }
+          })
+          .catch(error => console.error(error));
+      });
+    });
+  </script>
+
+  <style>
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .user-card {
+      background-color: #e0e5ec;
+      border-radius: 10px;
+      box-shadow: -3px -3px 6px rgba(255, 255, 255, 0.5), 3px 3px 6px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    .user-info h3 {
+      margin: 0;
+    }
+
+    .send-friend-request,
+    .friend-request-sent {
+      background-color: #e0e5ec;
+      border: none;
+      border-radius: 5px;
+      box-shadow: -2px -2px 4px rgba(255, 255, 255, 0.5), 2px 2px 4px rgba(0, 0, 0, 0.1);
+      color: #333;
+      cursor: pointer;
+      padding: 5px 10px;
+      transition: all 0.3s ease;
+    }
+
+    .send-friend-request:hover,
+    .friend-request-sent:hover {
+      box-shadow: inset -2px -2px 4px rgba(255, 255, 255, 0.5), inset 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .friend-request-sent {
+      cursor: default;
+    }
+  </style>
+{% endblock %}

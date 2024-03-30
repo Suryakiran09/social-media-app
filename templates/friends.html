@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Friends</h1>
+
+  <h2>My Friends</h2>
+  {% if user.profile.friends.all %}
+    <ul>
+      {% for friend in user.profile.friends.all %}
+        <li>{{ friend.username }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>You don't have any friends yet.</p>
+  {% endif %}
+
+  <h2>Friend Requests</h2>
+  {% if received_friend_requests %}
+    <ul>
+      {% for friend_request in received_friend_requests %}
+        <li>
+          <div class="friend-request-card">
+            <div class="friend-request-info">
+              <h3>{{ friend_request.from_user.username }}</h3>
+            </div>
+            <div class="friend-request-actions">
+              <form method="post" action="{% url 'accept_friend_request' friend_request.id %}">
+                {% csrf_token %}
+                <button type="submit" class="accept-friend-request">Accept</button>
+              </form>
+              <form method="post" action="{% url 'reject_friend_request' friend_request.id %}">
+                {% csrf_token %}
+                <button type="submit" class="reject-friend-request">Reject</button>
+              </form>
+            </div>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>You don't have any friend requests.</p>
+  {% endif %}
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    const acceptFriendRequestButtons = document.querySelectorAll('.accept-friend-request');
+    const rejectFriendRequestButtons = document.querySelectorAll('.reject-friend-request');
+
+    acceptFriendRequestButtons.forEach(button => {
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+        const url = event.target.closest('form').action;
+        fetch(url, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+          },
+        })
+          .then(response => {
+            if (response.ok) {
+              event.target.closest('li').remove();
+            }
+          })
+          .catch(error => console.error(error));
+      });
+    });
+
+    rejectFriendRequestButtons.forEach(button => {
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+        const url = event.target.closest('form').action;
+        fetch(url, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+          },
+        })
+          .then(response => {
+            if (response.ok) {
+              event.target.closest('li').remove();
+            }
+          })
+          .catch(error => console.error(error));
+      });
+    });
+  </script>
+
+  <style>
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .friend-request-card {
+      background-color: #e0e5ec;
+      border-radius: 10px;
+      box-shadow: -3px -3px 6px rgba(255, 255, 255, 0.5), 3px 3px 6px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    .friend-request-info h3 {
+      margin: 0;
+    }
+
+    .accept-friend-request,
+    .reject-friend-request {
+      background-color: #e0e5ec;
+      border: none;
+      border-radius: 5px;
+      box-shadow: -2px -2px 4px rgba(255, 255, 255, 0.5), 2px 2px 4px rgba(0, 0, 0, 0.1);
+      color: #333;
+      cursor: pointer;
+      padding: 5px 10px;
+      margin-left: 5px;
+      transition: all 0.3s ease;
+    }
+
+    .accept-friend-request:hover {
+      box-shadow: inset -2px -2px 4px rgba(255, 255, 255, 0.5), inset 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .reject-friend-request:hover {
+      box-shadow: inset -2px -2px 4px rgba(255, 255, 255, 0.5), inset 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+{% endblock %}

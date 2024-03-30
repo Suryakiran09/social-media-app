@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Friend App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins">
+    <style>
+
+      nav {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
+
+      nav a {
+        background-color: #e0e5ec;
+        border-radius: 10px;
+        box-shadow: -3px -3px 6px rgba(255, 255, 255, 0.5), 3px 3px 6px rgba(0, 0, 0, 0.1);
+        color: #333;
+        padding: 10px 20px;
+        text-decoration: none;
+        margin: 0 10px;
+        transition: all 0.3s ease;
+      }
+
+      nav a:hover {
+        box-shadow: inset -3px -3px 6px rgba(255, 255, 255, 0.5), inset 3px 3px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f5f5f5;
+    }
+    
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    /* Post Card */
+    .post-card {
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        padding: 20px;
+    }
+    
+    .post-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    
+    .user-info {
+        display: flex;
+        align-items: center;
+    }
+    
+    .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+    
+    .username {
+        font-weight: bold;
+    }
+    
+    .post-date {
+        color: #888888;
+        font-size: 14px;
+    }
+    
+    .post-content {
+        margin-bottom: 10px;
+    }
+    
+    .post-image {
+        max-width: 100%;
+        height: auto;
+        margin-top: 10px;
+    }
+    
+    .post-actions {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: start;
+    }
+    
+    .like-button {
+        display: flex;
+        align-items: center;
+    }
+    
+    .like-link,
+    .unlike-link {
+        color: #007bff;
+        text-decoration: none;
+        margin-right: 10px;
+    }
+    
+    .like-count {
+        font-size: 14px;
+        color: #888888;
+    }
+    
+    .comment-section {
+        margin-top: 20px;
+    }
+    
+    .comment {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 10px;
+    }
+    
+    .comment-body {
+        background-color: #f5f5f5;
+        border-radius: 8px;
+        padding: 10px 50px 3px 10px;
+        margin-left: 10px;
+    }
+    
+    .comment-button {
+        background-color: #007bff;
+        color: #ffffff;
+        border: none;
+        border-radius: 4px;
+        padding: 8px 16px;
+        cursor: pointer;
+    }
+
+    input{
+      width: 500px;
+      padding: 10px;
+      border-radius: 30px;
+      background-color: rgb(0,0,0,,0.2)
+      font-size: 15px;
+    }
+    
+    .comment-button:hover {
+        background-color: #0056b3;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <nav>
+        <a href="{% url 'post_create' %}">Create Post</a>
+        <a href="{% url 'profile' %}">My Profile</a>
+        <a href="{% url 'friends' %}">Friends</a>
+        <a href="{% url 'user_list' %}">Users</a>
+      </nav>
+      <div class="container">
+        <h1>Posts</h1>
+        {% for post in posts %}
+            <div class="post-card">
+                <div class="post-header">
+                    <div class="user-info">
+                        <img src="" alt="User Avatar" class="avatar">
+                        <span class="username">{{ post.user.username }}</span>
+                    </div>
+                    <div class="post-date">{{ post.created_at }}</div>
+                </div>
+                <div class="post-content">
+                    <p>{{ post.post_description }}</p>
+                    {% if post.post_image %}
+                        <img src="{{ post.post_image.url }}" alt="Post Image" class="post-image">
+                    {% endif %}
+                </div>
+                <div class="post-actions">
+                    <div class="like-button">
+                        {% if request.user in post.likes.all %}
+                            <a href="{% url 'like_post' post.id %}" class="unlike-link">Unlike</a>
+                        {% else %}
+                            <a href="{% url 'like_post' post.id %}" class="like-link">Like</a>
+                        {% endif %}
+                        <span class="like-count">{{ post.likes.count }} likes</span>
+                    </div>
+                    <div class="comment-section">
+                        <h4>Comments</h4>
+                        {% for comment in post.comments.all %}
+                            <div class="comment">
+                                <img src="{{ comment.user.profile.avatar.url }}" alt="User Avatar" class="avatar">
+                                <div class="comment-body">
+                                    <span class="username">{{ comment.user.username }}</span>
+                                    <p>{{ comment.comment_text }}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <form method="post" action="{% url 'create_comment' post.id %}">
+                            {% csrf_token %}
+                            {{ comment_form.comment_text }}
+                            <button type="submit" class="comment-button">Comment</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+      {% block content %}{% endblock %}
+    </div>
+  </body>
+  <script>
+      document.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            localStorage.setItem('scrollPosition', window.scrollY);
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedScrollPosition = localStorage.getItem('scrollPosition');
+        if (savedScrollPosition !== null) {
+            window.scrollTo(0, savedScrollPosition);
+        }
+
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', () => {
+                localStorage.setItem('scrollPosition', window.scrollY);
+            });
+        });
+    });
+  </script>
+</html>

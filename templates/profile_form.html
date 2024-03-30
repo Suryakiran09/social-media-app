@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Create/Update Profile</h1>
+
+  <div class="profile-pic" style="display:flex; justify-content: center;">
+    <img src="{{ request.user.profile.photo.url}}" alt="user profile picture" style="height: 200px; width: 200px; border-radius: 50%; ">
+  </div>
+  <form method="post" enctype="multipart/form-data" class="profile-form">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div class="form-group">
+      {{ form.username.label_tag }}
+      <div class="form-control">
+        {{ form.username }}
+      </div>
+    </div>
+
+    <div class="form-group">
+      {{ form.date_of_birth.label_tag }}
+      <div class="form-control">
+        {{ form.date_of_birth }}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="id_photo">Photo:</label>
+      <div class="form-control">
+        <span class="currently-hidden">Currently: <a href="/media/{{ request.user.profile.photo }}" target="_blank">{{ request.user.profile.photo }}</a></span>
+        <input type="checkbox" name="photo-clear" id="photo-clear_id" style="visibility: collapse;">
+        <label for="photo-clear_id" style="display:none;">Clear</label>
+
+        Change:
+        <input type="file" name="photo" accept="image/*" id="id_photo">
+        <button type="button" onclick="resetFileInput('id_photo')" class="clear-button">Clear</button>
+      </div>
+    </div>
+
+    <button type="submit" class="submit-button">Save</button>
+  </form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const fileInput = document.querySelector('input[type="file"]');
+  const previewContainer = document.createElement('div');
+  previewContainer.classList.add('preview-container');
+
+  fileInput.addEventListener('change', () => {
+    const file = fileInput.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const preview = document.createElement('img');
+        preview.src = reader.result;
+        previewContainer.innerHTML = '';
+        previewContainer.appendChild(preview);
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  const formControl = fileInput.closest('.form-control');
+  formControl.appendChild(previewContainer);
+
+  function resetFileInput(elementId) {
+    const inputElement = document.getElementById(elementId);
+    inputElement.value = "";
+
+    const clearButton = document.querySelector(".clear-button");
+    clearButton.style.display = "inline";
+  }
+
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files.length > 0) {
+      const clearButton = document.querySelector(".clear-button");
+      clearButton.style.display = "inline";
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        const preview = document.createElement('img');
+        preview.src = reader.result;
+        previewContainer.innerHTML = '';
+        previewContainer.appendChild(preview);
+      };
+      reader.readAsDataURL(file);
+
+      // Reset the input value and show the "Clear" button
+      resetFileInput(fileInput.getAttribute('id'));
+
+    } else {
+      const clearButton = document.querySelector(".clear-button");
+      clearButton.style.display = "none";
+      previewContainer.innerHTML = '';
+    }
+  });
+</script>
+
+  <style>
+    .currently-hidden {
+      display: none;
+    }
+
+    .profile-form {
+      background-color: #e0e5ec;
+      border-radius: 10px;
+      box-shadow: -3px -3px 6px rgba(255, 255, 255, 0.5), 3px 3px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-control {
+      background-color: #e0e5ec;
+      border-radius: 5px;
+      box-shadow: inset -2px -2px 4px rgba(255, 255, 255, 0.5), inset 2px 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 10px;
+    }
+
+    .form-control input,
+    .form-control select {
+      background-color: transparent;
+      border: none;
+      outline: none;
+      width: 100%;
+    }
+
+    .preview-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .preview-container img {
+      max-width: 100%;
+      max-height: 200px;
+    }
+
+    .clear-button {
+      display: none;
+    }
+  </style>
+{% endblock %}
