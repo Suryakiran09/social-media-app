@@ -33,6 +33,8 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'posts',
     'inst_profile',
+    'users',
+    'inst_messages',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

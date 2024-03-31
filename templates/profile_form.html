@@ -4,7 +4,9 @@
   <h1>Create/Update Profile</h1>
 
   <div class="profile-pic" style="display:flex; justify-content: center;">
-    <img src="{{ request.user.profile.photo.url}}" alt="user profile picture" style="height: 200px; width: 200px; border-radius: 50%; ">
+    {% if request.user.profile.photo %}
+    <img src="{{request.user.profile.photo.url}}" alt="user profile picture" style="height: 200px; width: 200px; border-radius: 50%; ">
+    {% endif %}
   </div>
   <form method="post" enctype="multipart/form-data" class="profile-form">
     {% csrf_token %}

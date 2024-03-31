@@ -1,0 +1,24 @@
+<!-- messages/templates/messages/individual_chat.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Chat with {{ friend.username }}</h1>
+
+{% for message in messages %}
+<div class="message {% if message.sender == request.user.profile %}sent{% else %}received{% endif %}">
+    <span class="sender">{{ message.sender.username }}</span>
+    <span class="content">{{ message.content }}</span>
+    <span class="timestamp">{{ message.timestamp }}</span>
+    {% if message.is_read %}
+    <span class="read-receipt">Read</span>
+    {% endif %}
+</div>
+{% endfor %}
+
+<form method="post" action="{% url 'send_message' %}">
+    {% csrf_token %}
+    <textarea name="content" placeholder="Type your message here"></textarea>
+    <input type="hidden" name="recipients" value="{{ friend.id }}">
+    <button type="submit">Send Message</button>
+</form>
+{% endblock %}

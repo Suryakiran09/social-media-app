@@ -153,10 +153,12 @@
   <body>
     <div class="container">
       <nav>
-        <a href="{% url 'post_create' %}">Create Post</a>
+        <a href="{% url 'post_list' %}">Posts</a>
+        <a href="{% url 'chat' %}">Chats</a>
         <a href="{% url 'profile' %}">My Profile</a>
         <a href="{% url 'friends' %}">Friends</a>
         <a href="{% url 'user_list' %}">Users</a>
+        <a href="{% url 'logout' %}">Logout</a>
       </nav>
       <div class="container">
         <h1>Posts</h1>
