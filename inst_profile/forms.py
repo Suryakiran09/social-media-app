@@ -19,3 +19,13 @@ class ProfileForm(forms.ModelForm):
         super(ProfileForm, self).__init__(*args, **kwargs)
         if user:
             self.fields['username'].initial = user.username
+            
+    def clean(self):
+        cleaned_data = super().clean()
+        photo = cleaned_data.get('photo')
+
+        if photo and self.instance.photo and photo != self.instance.photo:
+            # Delete the old image if a new one was provided
+            self.instance.photo.delete()
+
+        return cleaned_data

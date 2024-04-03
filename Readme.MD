@@ -1,0 +1,8 @@
+![Login Page](image.png)
+![Register Page](image-1.png)
+![Posts Page](image-2.png)
+![Chat Page](image-3.png)
+![Chat Messages Page](image-4.png)
+![Profile Page](image-5.png)
+![users Page](image-6.png)
+![Freidn Request Page](image-7.png)

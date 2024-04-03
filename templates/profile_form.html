@@ -29,13 +29,7 @@
     <div class="form-group">
       <label for="id_photo">Photo:</label>
       <div class="form-control">
-        <span class="currently-hidden">Currently: <a href="/media/{{ request.user.profile.photo }}" target="_blank">{{ request.user.profile.photo }}</a></span>
-        <input type="checkbox" name="photo-clear" id="photo-clear_id" style="visibility: collapse;">
-        <label for="photo-clear_id" style="display:none;">Clear</label>
-
-        Change:
-        <input type="file" name="photo" accept="image/*" id="id_photo">
-        <button type="button" onclick="resetFileInput('id_photo')" class="clear-button">Clear</button>
+        {{form.photo}}
       </div>
     </div>
 
@@ -45,57 +39,59 @@
 
 {% block scripts %}
 <script>
-  const fileInput = document.querySelector('input[type="file"]');
-  const previewContainer = document.createElement('div');
-  previewContainer.classList.add('preview-container');
-
-  fileInput.addEventListener('change', () => {
-    const file = fileInput.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const preview = document.createElement('img');
-        preview.src = reader.result;
-        previewContainer.innerHTML = '';
-        previewContainer.appendChild(preview);
-      };
-      reader.readAsDataURL(file);
-    }
-  });
-
-  const formControl = fileInput.closest('.form-control');
-  formControl.appendChild(previewContainer);
-
-  function resetFileInput(elementId) {
-    const inputElement = document.getElementById(elementId);
-    inputElement.value = "";
-
-    const clearButton = document.querySelector(".clear-button");
-    clearButton.style.display = "inline";
-  }
-
-  fileInput.addEventListener('change', () => {
-    if (fileInput.files.length > 0) {
+  document.addEventListener('DOMContentLoaded', function () {
+    const fileInput = document.querySelector('input[type="file"]');
+    const previewContainer = document.createElement('div');
+    previewContainer.classList.add('preview-container');
+  
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const preview = document.createElement('img');
+          preview.src = reader.result;
+          previewContainer.innerHTML = '';
+          previewContainer.appendChild(preview);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  
+    const formControl = fileInput.closest('.form-control');
+    formControl.appendChild(previewContainer);
+  
+    function resetFileInput(elementId) {
+      const inputElement = document.getElementById(elementId);
+      inputElement.value = "";
+  
       const clearButton = document.querySelector(".clear-button");
       clearButton.style.display = "inline";
-      const file = fileInput.files[0];
-      const reader = new FileReader();
-      reader.onload = () => {
-        const preview = document.createElement('img');
-        preview.src = reader.result;
-        previewContainer.innerHTML = '';
-        previewContainer.appendChild(preview);
-      };
-      reader.readAsDataURL(file);
-
-      // Reset the input value and show the "Clear" button
-      resetFileInput(fileInput.getAttribute('id'));
-
-    } else {
-      const clearButton = document.querySelector(".clear-button");
-      clearButton.style.display = "none";
-      previewContainer.innerHTML = '';
     }
+  
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length > 0) {
+        const clearButton = document.querySelector(".clear-button");
+        clearButton.style.display = "inline";
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+        reader.onload = () => {
+          const preview = document.createElement('img');
+          preview.src = reader.result;
+          previewContainer.innerHTML = '';
+          previewContainer.appendChild(preview);
+        };
+        reader.readAsDataURL(file);
+  
+        // Reset the input value and show the "Clear" button
+        resetFileInput(fileInput.getAttribute('id'));
+  
+      } else {
+        const clearButton = document.querySelector(".clear-button");
+        clearButton.style.display = "none";
+        previewContainer.innerHTML = '';
+      }
+    });
   });
 </script>
 

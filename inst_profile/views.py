@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from .forms import ProfileForm
 from .models import FriendRequest, Profile
 from django.contrib.auth.models import User
+import os
 
 @login_required(login_url='/login')
 def profile(request):
@@ -11,6 +12,13 @@ def profile(request):
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
+            # Handle the image separately
+            photo = request.FILES.get('photo')
+            print(photo)
+            if photo:
+                profile.photo  = photo
+                profile.save()
+
             form.save()
     else:
         form = ProfileForm(instance=profile)

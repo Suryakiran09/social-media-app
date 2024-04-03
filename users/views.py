@@ -15,7 +15,7 @@ def user_login(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('/posts')
+            return redirect('/')
         else:
             return render(request, 'login/login.html', {'error_message': 'Invalid username or password'})
 
@@ -42,11 +42,11 @@ def registration(request):
                 user.save()
                 authenticated_user = authenticate(request, username=first_name, password=password)
                 login(request, user)
-                return redirect('/posts') 
+                return redirect('/') 
         else:
             messages.error(request, "Password and Retype Password do not match.")
     return render(request,'registration/registration.html')
 
 def user_logout(request):
     logout(request)
-    return redirect("/login")
+    return redirect('login')
